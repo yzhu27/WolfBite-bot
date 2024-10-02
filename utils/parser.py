@@ -20,13 +20,3 @@ def parse_menu(html_content):
         menu_dict[category_name] = items_list
 
     return menu_dict
-
-# # Example usage:
-# #read the html content from a file
-# with open("test/fountain_10-01_dinner.xml", "r") as file:
-#     html_content = file.read()
-# parsed_menu = parse_menu(html_content)
-# # pretty print the parsed menu
-# from pprint import pprint
-# pprint(parsed_menu)
-# # print(parsed_menu)
