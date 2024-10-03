@@ -7,6 +7,12 @@ def load_tg_config():
         'telegram_token': os.getenv('TELEGRAM_TOKEN')
     }
 
+def load_discord_config():
+    """ Load token and other configurations from environment variables or secure storage. """
+    return {
+        'discord_token': os.getenv('DISCORD_TOKEN')
+    }
+
 def load_halls():
     """ Load dining halls from a JSON file. """
     with open('config/halls.json', 'r') as file:
