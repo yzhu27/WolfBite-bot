@@ -8,4 +8,4 @@ from bots.discord_bot import start_discord_bot
 
 if __name__ == '__main__':
     start_telegram_bot()
-    start_discord_bot()
+    # start_discord_bot()
