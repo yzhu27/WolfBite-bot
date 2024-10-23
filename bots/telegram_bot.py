@@ -70,7 +70,7 @@ def period_choice(update: Update, context: CallbackContext):
     formatted_menu = format_menu(translated_menu)
     title = f"{today_date} - {context.user_data['hall_name']} - {context.user_data['period']}"
     text = f"{formatted_menu}"
-    query.edit_message_text(text=title + '\n' + text)
+    query.edit_message_text(text=title + '\n' + text, parse_mode="markdown")
     return ConversationHandler.END
 
 def language_command(update: Update, context: CallbackContext):
