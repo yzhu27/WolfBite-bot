@@ -68,7 +68,7 @@ def period_choice(update: Update, context: CallbackContext):
     translated_menu = {translate_text(category, language): [translate_text(item['dish'], language) for item in items]
                        for category, items in menu.items()}
     formatted_menu = format_menu(translated_menu)
-    title = f"{today_date} - {context.user_data['hall_name']} - {context.user_data['period']}"
+    title = f"*Date:* {today_date}\n*Hall:* {context.user_data['hall_name']}\n*Period:* {context.user_data['period']}\n"
     text = f"{formatted_menu}"
     query.edit_message_text(text=title + '\n' + text, parse_mode="markdown")
     return ConversationHandler.END
