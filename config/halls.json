@@ -1,7 +1,6 @@
 [
-    {"name": "Fountain", "pid": "45"},
-    {"name": "Clark", "pid": "46"},
-    {"name": "Case", "pid": "47"},
-    {"name": "University Towers", "pid": "26534"},
-    {"name": "One Earth", "pid": "73"}
+    {"name": "Fountain", "pid": "1"},
+    {"name": "Clark", "pid": "2"},
+    {"name": "Case", "pid": "3"},
+    {"name": "On the Oval", "pid": "6"}
 ]
