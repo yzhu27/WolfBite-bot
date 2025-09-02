@@ -58,14 +58,14 @@ def period_choice(update: Update, context: CallbackContext):
     searching_message = translate_text("Searching...", context.bot_data[update.effective_user.id]['language'])
     query.edit_message_text(text=searching_message)
     # Fetch menu using today's date and hall PID
-    menu = menu_query.fetch_menu_data(date=today_date, meal=context.user_data['period'], pid=context.user_data['hall_pid'])
+    menu = menu_query.fetch_menu_data(date=today_date, meal=context.user_data['period'], unitOid=context.user_data['hall_pid'])
     formatted_menu = format_menu(menu)
     if not menu:
         invalid_message = translate_text("Sorry, no menu data available. This hall may not be open during this period or your inquiry was incorrect.", context.bot_data[update.effective_user.id]['language'])
         query.edit_message_text(text=invalid_message)
         return ConversationHandler.END
     language = context.bot_data.get(update.effective_user.id, {}).get('language', 'English')
-    translated_menu = {translate_text(category, language): [translate_text(item['dish'], language) for item in items]
+    translated_menu = {translate_text(category, language): [translate_text(item, language) for item in items]
                        for category, items in menu.items()}
     formatted_menu = format_menu(translated_menu)
     title = f"*Date:* {today_date}\n*Hall:* {context.user_data['hall_name']}\n*Period:* {context.user_data['period']}\n"
