@@ -18,7 +18,7 @@ def start(update: Update, context: CallbackContext):
     if user_id in context.bot_data and 'language' in context.bot_data[user_id]:
         language = context.bot_data[user_id]['language']
     else:
-        language = 'English'
+        language = 'Chinese'
         context.bot_data[user_id] = {'language': language}
     welcome_message = "Welcome to the NCSU Dining Bot! This bot helps you check the daily menu for various dining halls in NCSU campus."
     update.message.reply_text(translate_text(welcome_message, language))
@@ -64,7 +64,7 @@ def period_choice(update: Update, context: CallbackContext):
         invalid_message = translate_text("Sorry, no menu data available. This hall may not be open during this period or your inquiry was incorrect.", context.bot_data[update.effective_user.id]['language'])
         query.edit_message_text(text=invalid_message)
         return ConversationHandler.END
-    language = context.bot_data.get(update.effective_user.id, {}).get('language', 'English')
+    language = context.bot_data.get(update.effective_user.id, {}).get('language', 'Chinese')
     translated_menu = {translate_text(category, language): [translate_text(item, language) for item in items]
                        for category, items in menu.items()}
     formatted_menu = format_menu(translated_menu)
@@ -82,7 +82,7 @@ def language_command(update: Update, context: CallbackContext):
 
     user_id = update.effective_user.id
     if not (user_id in context.bot_data and 'language' in context.bot_data[user_id]):
-        context.bot_data[user_id] = {'language': 'English'}
+        context.bot_data[user_id] = {'language': 'Chinese'}
     language_message = translate_text("Select your language:", context.bot_data[update.effective_user.id]['language'])
     update.message.reply_text(language_message, reply_markup=reply_markup)
 
