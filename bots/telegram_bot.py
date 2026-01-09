@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackContext, ConversationHandler, CallbackQueryHandler
 import services.menu_query as menu_query
@@ -53,22 +53,32 @@ def period_choice(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
     context.user_data['period'] = query.data
-    # Get today's date in YYYY-MM-DD format
-    today_date = datetime.now().strftime('%Y-%m-%d')
-    searching_message = translate_text("Searching...", context.bot_data[update.effective_user.id]['language'])
+    now = datetime.now()
+    query_date = now + timedelta(days=1) if now.hour >= 21 else now
+    query_date_str = query_date.strftime('%Y-%m-%d')
+    language = context.bot_data.get(update.effective_user.id, {}).get('language', 'Chinese')
+    searching_message = translate_text("Searching...", language)
     query.edit_message_text(text=searching_message)
-    # Fetch menu using today's date and hall PID
-    menu = menu_query.fetch_menu_data(date=today_date, meal=context.user_data['period'], unitOid=context.user_data['hall_pid'])
-    formatted_menu = format_menu(menu)
+    menu = None
+    try:
+        menu = menu_query.fetch_menu_data(
+            date=query_date_str,
+            meal=context.user_data['period'],
+            unitOid=context.user_data['hall_pid']
+        )
+    except Exception:
+        menu = None
     if not menu:
-        invalid_message = translate_text("Sorry, no menu data available. This hall may not be open during this period or your inquiry was incorrect.", context.bot_data[update.effective_user.id]['language'])
+        invalid_message = translate_text(
+            "Sorry, no menu data available. This hall may not be open during this period or your inquiry was incorrect.",
+            language
+        )
         query.edit_message_text(text=invalid_message)
         return ConversationHandler.END
-    language = context.bot_data.get(update.effective_user.id, {}).get('language', 'Chinese')
     translated_menu = {translate_text(category, language): [translate_text(item, language) for item in items]
                        for category, items in menu.items()}
     formatted_menu = format_menu(translated_menu)
-    title = f"*Date:* {today_date}\n*Hall:* {context.user_data['hall_name']}\n*Period:* {context.user_data['period']}\n"
+    title = f"*Date:* {query_date_str}\n*Hall:* {context.user_data['hall_name']}\n*Period:* {context.user_data['period']}\n"
     text = f"{formatted_menu}"
     query.edit_message_text(text=title + '\n' + text, parse_mode="markdown")
     return ConversationHandler.END
