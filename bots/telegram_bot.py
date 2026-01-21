@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackContext, ConversationHandler, CallbackQueryHandler
 import services.menu_query as menu_query
@@ -53,7 +54,7 @@ def period_choice(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
     context.user_data['period'] = query.data
-    now = datetime.now()
+    now = datetime.now(ZoneInfo("America/New_York"))
     query_date = now + timedelta(days=1) if now.hour >= 21 else now
     query_date_str = query_date.strftime('%Y-%m-%d')
     language = context.bot_data.get(update.effective_user.id, {}).get('language', 'Chinese')
