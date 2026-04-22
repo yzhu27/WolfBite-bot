@@ -101,23 +101,48 @@ export async function fetchMenuData(
 ): Promise<Record<string, string[]> | null> {
   const jar: CookieJar = new Map();
   await seedSession(jar);
+  console.log(
+    `[cbord] seeded cookies: [${Array.from(jar.keys()).join(", ") || "<none>"}]`,
+  );
 
   const unitResp = await jsonPost(jar, `${BASE}/Unit/SelectUnitFromUnitsList`, {
     unitOid: String(unitOid),
   });
   const menuPanelHtml = panelHtml(unitResp, "menuPanel");
-  if (!menuPanelHtml) return null;
+  if (!menuPanelHtml) {
+    console.warn(
+      `[cbord] no menuPanel in SelectUnit response for unitOid=${unitOid}. Panel ids: ${summarizePanels(unitResp)}`,
+    );
+    return null;
+  }
 
   const menusMap = await parseMenuPanel(menuPanelHtml);
   const mealKey = meal.charAt(0).toUpperCase() + meal.slice(1).toLowerCase();
   const menuOid = menusMap[date]?.[mealKey];
-  if (menuOid === undefined) return null;
+  if (menuOid === undefined) {
+    console.warn(
+      `[cbord] date/meal not found. wanted date=${date} meal=${mealKey}. menusMap dates=${JSON.stringify(Object.keys(menusMap))}. on wanted date: ${JSON.stringify(menusMap[date] ?? null)}`,
+    );
+    return null;
+  }
 
   const menuResp = await jsonPost(jar, `${BASE}/Menu/SelectMenu`, {
     menuOid: String(menuOid),
   });
   const itemPanelHtml = panelHtml(menuResp, "itemPanel");
-  if (!itemPanelHtml) return null;
+  if (!itemPanelHtml) {
+    console.warn(
+      `[cbord] no itemPanel in SelectMenu response for menuOid=${menuOid}. Panel ids: ${summarizePanels(menuResp)}`,
+    );
+    return null;
+  }
 
   return parseItemPanel(itemPanelHtml);
+}
+
+function summarizePanels(payload: unknown): string {
+  if (!payload || typeof payload !== "object") return "<not-object>";
+  const panels = (payload as { panels?: Array<{ id: string }> }).panels;
+  if (!Array.isArray(panels)) return "<no panels array>";
+  return JSON.stringify(panels.map((p) => p.id));
 }

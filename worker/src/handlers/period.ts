@@ -31,8 +31,21 @@ export async function onPeriodChoice(ctx: BotContext): Promise<void> {
   let menu: Record<string, string[]> | null = null;
   try {
     menu = await fetchMenuData(dateStr, period, pid);
-  } catch {
+  } catch (err) {
+    console.error(
+      `[menu] fetchMenuData threw for pid=${pid} meal=${period} date=${dateStr}:`,
+      err,
+    );
     menu = null;
+  }
+  if (menu === null) {
+    console.warn(
+      `[menu] fetchMenuData returned null for pid=${pid} meal=${period} date=${dateStr}`,
+    );
+  } else if (Object.keys(menu).length === 0) {
+    console.warn(
+      `[menu] fetchMenuData returned empty object for pid=${pid} meal=${period} date=${dateStr}`,
+    );
   }
 
   if (!menu || Object.keys(menu).length === 0) {
