@@ -5,12 +5,19 @@ compatibility_flags = ["nodejs_compat"]
 workers_dev = true
 
 [observability]
+enabled = false
+head_sampling_rate = 1
+
 [observability.logs]
 enabled = true
+head_sampling_rate = 1
+persist = true
 invocation_logs = true
 
 [observability.traces]
-enabled = false
+enabled = true
+persist = true
+head_sampling_rate = 1
 
 # No KV: language preference is held in-memory per isolate (best-effort), and
 # the conversation flow embeds all context in inline-keyboard callback_data.
