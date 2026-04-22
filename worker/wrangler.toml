@@ -4,6 +4,14 @@ compatibility_date = "2024-09-01"
 compatibility_flags = ["nodejs_compat"]
 workers_dev = true
 
+[observability]
+[observability.logs]
+enabled = true
+invocation_logs = true
+
+[observability.traces]
+enabled = false
+
 # No KV: language preference is held in-memory per isolate (best-effort), and
 # the conversation flow embeds all context in inline-keyboard callback_data.
 #
