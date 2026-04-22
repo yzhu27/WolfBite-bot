@@ -56,11 +56,26 @@ function cookieHeader(jar: CookieJar): string {
     .join("; ");
 }
 
+// Seed the ASP.NET session cookie. CBORD's first response is a 302 that sets
+// ASP.NET_SessionId and redirects to the same URL; Workers `fetch` follows
+// redirects automatically but has no cookie jar, so the follow-up request
+// doesn't carry the cookie and gets redirected again, until `fetch` aborts
+// with "Too many redirects". We therefore disable auto-redirect, absorb
+// Set-Cookie ourselves, and re-request the Location with the jar applied.
 async function seedSession(jar: CookieJar): Promise<void> {
-  const res = await fetch(BASE, { headers: BASE_HEADERS });
-  absorbSetCookie(jar, res);
-  // Consume the body so the fetch connection closes.
-  await res.arrayBuffer();
+  let url: string = BASE;
+  for (let hop = 0; hop < 6; hop++) {
+    const headers: Record<string, string> = { ...BASE_HEADERS };
+    if (jar.size > 0) headers["Cookie"] = cookieHeader(jar);
+    const res = await fetch(url, { headers, redirect: "manual" });
+    absorbSetCookie(jar, res);
+    await res.arrayBuffer();
+    if (res.status < 300 || res.status >= 400) return;
+    const loc = res.headers.get("location");
+    if (!loc) return;
+    url = new URL(loc, url).toString();
+  }
+  throw new Error(`seedSession: redirect loop not resolved after 6 hops`);
 }
 
 async function jsonPost(
