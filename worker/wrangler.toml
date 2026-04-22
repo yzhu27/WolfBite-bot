@@ -1,0 +1,12 @@
+name = "wolfbite-worker"
+main = "src/index.ts"
+compatibility_date = "2024-09-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+# No KV: language preference is held in-memory per isolate (best-effort), and
+# the conversation flow embeds all context in inline-keyboard callback_data.
+#
+# Secrets (set via dashboard or `wrangler secret put`):
+#   TELEGRAM_TOKEN           — Bot token from @BotFather
+#   TELEGRAM_WEBHOOK_SECRET  — arbitrary string, passed to setWebhook(secret_token=)

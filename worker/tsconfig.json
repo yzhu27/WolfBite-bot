@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "lib": ["es2022"],
+    "types": ["@cloudflare/workers-types"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "rootDir": "..",
+    "baseUrl": "."
+  },
+  "include": [
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "../translations/Chinese.json",
+    "../translations/Spanish.json",
+    "../config/halls.json",
+    "../config/languages.json",
+    "../config/periods.json"
+  ],
+  "exclude": ["node_modules", "dist", ".wrangler"]
+}
